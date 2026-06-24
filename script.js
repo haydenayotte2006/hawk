@@ -22,7 +22,7 @@ if (tiltCard && !reduceMotion) {
 document.querySelectorAll('a[href$=".html"]').forEach((link) => {
   link.addEventListener('click', (event) => {
     const href = link.getAttribute('href');
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const currentPage = window.location.pathname.split('/').pop() || '/';
 
     if (!href || href === currentPage || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target === '_blank') return;
 

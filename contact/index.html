@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — Hawk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="grid-bg"><div class="grid-plane"></div><div class="glow glow-a"></div><div class="glow glow-b"></div></div>
+  <header class="nav liquid-glass">
+    <a href="/" class="brand"><span class="logo-shell"><img src="/hawk-logo.png" alt="Hawk logo"></span><span>Hawk</span></a>
+    <nav class="nav-links"><a href="/">Home</a><a href="/portfolio/">Portfolio</a><a href="/services/">Services</a><a href="/contact/" class="active">Contact</a></nav>
+    <a class="nav-hire" href="/contact/"><span>Hire Me</span><span class="nav-hire-arrow">→</span></a>
+  </header>
+  <main class="page page-enter narrow">
+    <section class="contact-layout">
+      <div class="page-heading contact-copy">
+        <p class="eyebrow">Start a Project</p>
+        <h1>Let’s build your next thumbnail!</h1>
+        <p>Use the form, or contact me directly on Twitter/X or Discord. For faster project requests, include the video idea, deadline, references, and the thumbnail style you want.</p>
+        <div class="social-actions icon-actions">
+          <a class="social-btn icon-social social-handle twitter-btn" href="https://x.com/hawkpng" target="_blank" rel="noopener" aria-label="Open Hawk on X / Twitter: @hawkpng" title="@hawkpng">
+            <svg class="app-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 10.3 22.4 1h-3.1l-6 7.2L8.5 1H1.6l8.1 11.8L1.2 23h3.1l6.8-8.1 5.4 8.1h6.9l-8.7-12.7Zm-2.4 2.9-1.3-1.9L5.2 3.3h2.1l4.7 6.7 1.3 1.8 6.1 8.8h-2.1l-5-7.4Z"/></svg>
+            <span><span>@hawkpng</span></span>
+          </a>
+          <button class="social-btn icon-social social-handle discord-btn discord-copy" type="button" data-copy-discord="hawkpsd" aria-label="Copy Hawk Discord username: hawkpsd" title="hawkpsd">
+            <svg class="app-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.7 4.6A17.4 17.4 0 0 0 15.4 3l-.2.4c1.5.4 2.2 1 2.2 1s-1.9-1-5.4-1-5.4 1-5.4 1 .8-.6 2.2-1L8.6 3a17.4 17.4 0 0 0-4.3 1.6C1.6 8.7.9 12.8 1.3 16.8A17.5 17.5 0 0 0 6.5 19.5l1.1-1.5c-.6-.2-1.2-.5-1.7-.9l.4-.3c3.3 1.5 6.9 1.5 10.1 0l.4.3c-.5.4-1.1.7-1.7.9l1.1 1.5a17.5 17.5 0 0 0 5.2-2.7c.5-4.7-.8-8.7-1.7-12.2ZM8.4 14.5c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Zm7.2 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Z"/></svg>
+            <span><span class="social-label"><span>hawkpsd</span></span></span>
+          </button>
+        </div>
+      </div>
+      <form class="contact-form" action="https://formsubmit.co/haydenayotte1313@gmail.com" method="POST">
+        <input type="hidden" name="_subject" value="New thumbnail project request from Hawk portfolio">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+        <label>Name<input required name="name" type="text" placeholder="Your name"></label>
+        <label>Email<input required name="email" type="email" placeholder="you@example.com"></label>
+        <label>Project Type<select required name="project_type"><option value="">Choose one</option><option>Single thumbnail</option><option>Thumbnail pack</option><option>Monthly work</option></select></label>
+        <label>Details<textarea required name="details" rows="5" placeholder="Tell me about the video, style, deadline, and references."></textarea></label>
+        <button class="btn btn-primary" type="submit"><span>Send Message</span></button>
+        <p class="form-note" id="formNote">This form sends your project details directly to Hawk.</p>
+      </form>
+    </section>
+  </main>
+  <script src="/script.js"></script>
+</body>
+</html>
