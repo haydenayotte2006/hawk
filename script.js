@@ -419,3 +419,31 @@ document.querySelectorAll("[data-copy-discord]").forEach((button) => {
   }
   window.addEventListener("load", stabilizeFeed, { once: true });
 })();
+
+
+/* Hard performance patch: remove old reveal classes that can trigger previous effects. */
+(function () {
+  function disableHeavyRevealEffects() {
+    document.querySelectorAll(".scroll-reactive-feed").forEach((el) => {
+      el.style.setProperty("--feed-progress", "1");
+      el.classList.remove("reveal");
+      el.classList.add("in-view");
+    });
+
+    document.querySelectorAll(".video-card, .thumb-card").forEach((card) => {
+      card.classList.remove("reveal");
+      card.classList.add("in-view");
+      card.style.filter = "none";
+      card.style.opacity = "";
+      card.style.transform = "";
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", disableHeavyRevealEffects);
+  } else {
+    disableHeavyRevealEffects();
+  }
+
+  window.addEventListener("load", disableHeavyRevealEffects, { once: true });
+})();

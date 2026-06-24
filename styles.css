@@ -3440,3 +3440,194 @@ body { -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; 
     -webkit-backdrop-filter: blur(4px) !important;
   }
 }
+
+
+/* ------------------------------------------------------------------
+   HARD PERFORMANCE PATCH / NO-BLUR VERSION
+   This is intentionally placed at the very bottom so it overrides all
+   earlier animation/blur rules from previous revisions.
+------------------------------------------------------------------ */
+
+/* Remove backdrop blur site-wide. This is one of the biggest GPU costs. */
+*,
+*::before,
+*::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Remove CSS filter blur/saturation/brightness effects from animated UI.
+   Thumbnail images stay true-color and unaffected. */
+.motion-pop,
+.motion-pop.is-visible,
+.reveal,
+.reveal.in-view,
+.page-enter,
+.nav,
+.liquid-glass,
+.hero-center,
+.hero-center > *,
+.creator-dock,
+.creator-track,
+.creator-avatar,
+.youtube-feed,
+.feed-head,
+.feed-tabs,
+.video-grid,
+.portfolio-grid,
+.video-card,
+.thumb-card,
+.yt-thumb,
+.thumb,
+.image-thumb,
+.price-card,
+.glass-card,
+.contact-form,
+.spyglass-backdrop,
+.spyglass-viewer,
+.grid-bg,
+.grid-plane,
+.glow {
+  filter: none !important;
+}
+
+/* Remove older scroll-scrub reveal. */
+.scroll-reactive-feed,
+.scroll-reactive-feed .feed-head,
+.scroll-reactive-feed .feed-tabs,
+.scroll-reactive-feed .video-card {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+  transition: none !important;
+  will-change: auto !important;
+}
+
+/* Kill thumbnail reveal/stagger animation completely. */
+.youtube-feed.reveal,
+.youtube-feed.reveal.in-view,
+.youtube-feed.reveal .feed-head,
+.youtube-feed.reveal .feed-tabs,
+.youtube-feed.reveal .video-card,
+.youtube-feed.reveal.in-view .feed-head,
+.youtube-feed.reveal.in-view .feed-tabs,
+.youtube-feed.reveal.in-view .video-card,
+.video-card.reveal,
+.video-card.reveal:not(.is-hidden),
+.thumb-card.reveal,
+.thumb-card.reveal:not(.is-hidden) {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Keep a light, cheap load-in only for main sections/buttons/text. */
+.motion-pop {
+  opacity: 0 !important;
+  transform: translate3d(0, 8px, 0) !important;
+  transition: opacity .25s ease, transform .25s ease !important;
+  will-change: opacity, transform;
+}
+
+.motion-pop.is-visible {
+  opacity: 1 !important;
+  transform: translate3d(0, 0, 0) !important;
+}
+
+/* Cards should not animate in one-by-one. */
+.video-card,
+.thumb-card {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+  animation: none !important;
+  transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease !important;
+  will-change: auto !important;
+}
+
+.video-card:hover,
+.thumb-card:hover {
+  transform: translate3d(0, -2px, 0) !important;
+}
+
+/* Make glass panels look similar without blur. */
+.liquid-glass,
+.hero-card,
+.glass-card,
+.thumb-card,
+.price-card,
+.contact-form,
+.youtube-feed {
+  background: rgba(20, 25, 34, .86) !important;
+  box-shadow: 0 18px 48px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.10) !important;
+}
+
+/* Creator bar and grid kept, but no extra glow blur cost. */
+.glow {
+  display: none !important;
+}
+
+.grid-plane {
+  will-change: background-position !important;
+  contain: paint !important;
+}
+
+/* Spyglass thumbnail viewer: dim background instead of blurring it. */
+body.spyglass-open main,
+body.spyglass-open header,
+body.spyglass-open .grid-bg {
+  filter: none !important;
+}
+
+.spyglass-backdrop,
+.thumbnail-lightbox,
+.lightbox-backdrop {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+  background: rgba(2, 6, 14, .82) !important;
+}
+
+/* All thumbnail images: never alter colors. */
+.yt-thumb img,
+.thumb img,
+.image-thumb img,
+.video-card img,
+.thumb-card img {
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  opacity: 1 !important;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Ensure filtering is instant and cheap. */
+.video-card.is-hidden,
+.thumb-card.is-hidden {
+  display: none !important;
+}
+
+/* Mobile/lower power: disable most continuous animations. */
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: .001ms !important;
+  }
+
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  .motion-pop,
+  .motion-pop.is-visible,
+  .video-card,
+  .thumb-card {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
