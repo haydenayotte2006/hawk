@@ -3270,3 +3270,173 @@ body .page-heading h1 + p {
   mix-blend-mode: normal !important;
   filter: none !important;
 }
+
+
+/* PERFORMANCE PATCH: smoother on slower devices without changing the layout. */
+html { scroll-behavior: smooth; }
+body { -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; }
+
+.grid-plane {
+  will-change: background-position;
+  transform: perspective(760px) rotateX(61deg) translateY(-12%) translateZ(0) !important;
+  backface-visibility: hidden;
+  contain: paint;
+}
+.grid-plane::after { will-change: transform, opacity; }
+
+.glow {
+  animation: none !important;
+  filter: blur(54px) !important;
+  opacity: .30 !important;
+}
+
+/* Remove costly blur/filter reveal animation. */
+.motion-pop,
+.motion-pop.is-visible,
+.reveal,
+.reveal.in-view,
+.page-enter,
+.nav,
+.hero-center > *,
+.youtube-feed,
+.portfolio-grid,
+.contact-form,
+.price-card,
+.glass-card,
+.video-card,
+.thumb-card {
+  filter: none !important;
+  backface-visibility: hidden;
+  transform-style: flat !important;
+}
+
+.motion-pop {
+  opacity: 0 !important;
+  transform: translate3d(0, 14px, 0) scale(.99) !important;
+  transition:
+    opacity .42s ease,
+    transform .46s cubic-bezier(.16, 1, .3, 1),
+    box-shadow .22s ease,
+    border-color .22s ease,
+    background .22s ease !important;
+  will-change: opacity, transform;
+}
+.motion-pop.is-visible {
+  opacity: 1 !important;
+  transform: translate3d(0, 0, 0) scale(1) !important;
+}
+.nav.motion-pop { transform: translate3d(0, -10px, 0) scale(.995) !important; }
+.nav.motion-pop.is-visible { transform: translate3d(0, 0, 0) scale(1) !important; }
+
+/* Disable scroll-scrub blur on the homepage portfolio section. */
+.scroll-reactive-feed,
+.scroll-reactive-feed .feed-head,
+.scroll-reactive-feed .feed-tabs,
+.scroll-reactive-feed .video-card {
+  filter: none !important;
+  transition: opacity .42s ease, transform .46s cubic-bezier(.16, 1, .3, 1) !important;
+  will-change: auto !important;
+}
+.scroll-reactive-feed {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Thumbnail cards: no individual stagger/blur animation. */
+.video-card,
+.thumb-card,
+.youtube-feed.reveal .video-card,
+.youtube-feed.reveal.in-view .video-card,
+.video-card.reveal,
+.video-card.reveal:not(.is-hidden) {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+  transition:
+    opacity .22s ease,
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease !important;
+  will-change: auto !important;
+}
+.video-card:hover,
+.thumb-card:hover {
+  transform: translate3d(0, -3px, 0) !important;
+}
+
+.yt-thumb,
+.thumb,
+.image-thumb {
+  isolation: isolate;
+  contain: paint;
+  overflow: hidden;
+}
+.yt-thumb img,
+.thumb img,
+.image-thumb img,
+.video-card img,
+.thumb-card img {
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.video-card.is-hidden,
+.thumb-card.is-hidden {
+  display: none !important;
+}
+
+/* Lighter glass effects reduce GPU cost. */
+.liquid-glass,
+.hero-card,
+.glass-card,
+.thumb-card,
+.price-card,
+.contact-form,
+.youtube-feed {
+  backdrop-filter: blur(10px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(120%) !important;
+}
+
+@media (prefers-reduced-motion: reduce), (max-width: 780px) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+
+  .grid-plane,
+  .grid-plane::after,
+  .creator-track,
+  .price-card,
+  .service-card {
+    animation: none !important;
+  }
+
+  .motion-pop,
+  .motion-pop.is-visible,
+  .page-enter,
+  .reveal,
+  .reveal.in-view,
+  .video-card,
+  .thumb-card {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: opacity .18s ease !important;
+  }
+
+  .liquid-glass,
+  .hero-card,
+  .glass-card,
+  .thumb-card,
+  .price-card,
+  .contact-form,
+  .youtube-feed {
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+  }
+}

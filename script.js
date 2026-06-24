@@ -403,3 +403,19 @@ document.querySelectorAll("[data-copy-discord]").forEach((button) => {
     randomizePortfolioSections();
   }
 })();
+
+
+/* Performance patch: stop scroll-scrub reveal from doing expensive work. */
+(function () {
+  function stabilizeFeed() {
+    document.querySelectorAll(".scroll-reactive-feed").forEach((feed) => {
+      feed.style.setProperty("--feed-progress", "1");
+    });
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", stabilizeFeed);
+  } else {
+    stabilizeFeed();
+  }
+  window.addEventListener("load", stabilizeFeed, { once: true });
+})();
