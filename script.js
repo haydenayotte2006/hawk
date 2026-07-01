@@ -1,3 +1,76 @@
+
+/* Easy portfolio updater: renders thumbnails/creators from portfolio-data.js and creators-data.js. */
+(function () {
+  function escapeHtml(value) {
+    return String(value || "").replace(/[&<>"']/g, function (char) {
+      return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char];
+    });
+  }
+
+  function shuffle(array) {
+    const copy = array.slice();
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function normalizePath(path) {
+    if (!path) return "";
+    return String(path);
+  }
+
+  function renderCreators() {
+    const track = document.querySelector(".creator-track");
+    if (!track || !Array.isArray(window.creatorImages)) return;
+
+    const list = window.creatorImages.filter(Boolean);
+    const doubled = list.concat(list);
+    track.innerHTML = doubled.map(function (src, index) {
+      return '<span class="creator-avatar" aria-hidden="true"><img src="' + normalizePath(src) + '" alt="Creator profile ' + ((index % list.length) + 1) + '" loading="lazy" decoding="async"></span>';
+    }).join("");
+  }
+
+  function renderGrid(grid) {
+    if (!grid || !Array.isArray(window.portfolioItems)) return;
+
+    const isPortfolioPage = grid.classList.contains("portfolio-grid");
+    const items = shuffle(window.portfolioItems);
+
+    grid.innerHTML = items.map(function (item) {
+      const category = escapeHtml((item.category || "gaming").toLowerCase());
+      const title = escapeHtml(item.title || "Untitled Thumbnail");
+      const subtitle = escapeHtml(item.subtitle || "");
+      const image = normalizePath(item.image || "");
+      const label = category.toUpperCase();
+
+      if (isPortfolioPage) {
+        return '<article class="thumb-card video-card" data-category="' + category + '">' +
+          '<div class="thumb image-thumb"><img src="' + image + '" alt="' + title + ' thumbnail" loading="lazy" decoding="async"></div>' +
+          '<h3>' + title + '</h3><p>' + subtitle + '</p>' +
+        '</article>';
+      }
+
+      return '<article class="video-card" data-category="' + category + '">' +
+        '<div class="yt-thumb image-thumb"><img src="' + image + '" alt="' + title + ' thumbnail" loading="lazy" decoding="async"><small>' + label + '</small></div>' +
+        '<h3>' + title + '</h3><p>' + subtitle + '</p>' +
+      '</article>';
+    }).join("");
+  }
+
+  function renderPortfolioData() {
+    renderCreators();
+    document.querySelectorAll(".video-grid, .portfolio-grid").forEach(renderGrid);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", renderPortfolioData);
+  } else {
+    renderPortfolioData();
+  }
+})();
+
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const tiltCard = document.querySelector('.tilt-card');

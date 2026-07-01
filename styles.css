@@ -3631,3 +3631,318 @@ body.spyglass-open .grid-bg {
     filter: none !important;
   }
 }
+
+
+/* ------------------------------------------------------------------
+   EASY-UPDATE + MOBILE + PERFORMANCE PATCH
+   - removes the temporary grey left-side load bar
+   - improves mobile layout
+   - avoids heavy blur/reveal effects on thumbnail-heavy pages
+------------------------------------------------------------------ */
+
+/* Kill any old transition/load overlays that showed as a grey vertical bar. */
+.page-transition,
+.page-transition::before,
+.page-transition::after,
+.transition-overlay,
+.transition-overlay::before,
+.transition-overlay::after,
+body::before,
+body::after {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Keep background behind the site and prevent accidental overlay stacking. */
+.grid-bg { z-index: -10 !important; }
+.nav, .page, main, header { position: relative; z-index: 1; }
+
+/* Better default sizing and smoother native scroll. */
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+body {
+  overflow-x: hidden;
+  min-width: 0;
+}
+
+/* Thumbnail-heavy sections should not use blur-heavy reveal effects. */
+.video-card,
+.thumb-card,
+.youtube-feed,
+.portfolio-grid,
+.scroll-reactive-feed,
+.scroll-reactive-feed .video-card {
+  filter: none !important;
+  will-change: auto !important;
+}
+.video-card,
+.thumb-card {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease !important;
+}
+.video-card:hover,
+.thumb-card:hover {
+  transform: translate3d(0, -3px, 0) !important;
+}
+.scroll-reactive-feed {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Load images cheaply and keep colors exact. */
+.yt-thumb img,
+.thumb img,
+.image-thumb img,
+.video-card img,
+.thumb-card img {
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  opacity: 1 !important;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Lighter glass so the design stays similar but performs better. */
+.liquid-glass,
+.hero-card,
+.glass-card,
+.thumb-card,
+.price-card,
+.contact-form,
+.youtube-feed {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Responsive fixes */
+@media (max-width: 900px) {
+  .nav {
+    width: min(100% - 22px, 720px) !important;
+    min-height: auto !important;
+    margin-top: 12px !important;
+    padding: 10px 12px !important;
+    border-radius: 20px !important;
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    grid-template-areas:
+      "brand hire"
+      "links links" !important;
+    row-gap: 10px !important;
+  }
+
+  .brand { grid-area: brand; min-width: 0; }
+  .nav-hire { grid-area: hire; margin-left: 0 !important; }
+  .nav-links {
+    grid-area: links;
+    position: static !important;
+    transform: none !important;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px !important;
+  }
+
+  .nav-links a {
+    padding: 9px 11px !important;
+    font-size: .9rem !important;
+  }
+
+  .page {
+    width: min(100% - 22px, 720px) !important;
+    padding-top: 44px !important;
+  }
+
+  .hero-minimal {
+    min-height: calc(100svh - 170px) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .hero-center {
+    width: 100% !important;
+    transform: none !important;
+  }
+
+  .hero-name {
+    font-size: clamp(4.2rem, 22vw, 8rem) !important;
+    text-align: center !important;
+  }
+
+  .creator-dock {
+    width: min(94vw, 520px) !important;
+    overflow: hidden !important;
+  }
+
+  .youtube-feed {
+    padding: 16px !important;
+    border-radius: 22px !important;
+  }
+
+  .feed-head {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .feed-tabs {
+    gap: 8px !important;
+    overflow-x: auto !important;
+    padding-bottom: 10px !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .video-grid,
+  .portfolio-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .yt-thumb,
+  .thumb {
+    border-radius: 16px !important;
+  }
+
+  .page-heading h1 {
+    font-size: clamp(3rem, 16vw, 5.5rem) !important;
+    text-align: left !important;
+  }
+
+  .price-grid,
+  .services-grid,
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .contact-form,
+  .price-card,
+  .glass-card {
+    padding: 18px !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .logo-shell {
+    width: 38px !important;
+    height: 38px !important;
+  }
+  .brand span:last-child {
+    font-size: 1rem !important;
+  }
+  .nav-hire {
+    min-height: 36px !important;
+    font-size: .86rem !important;
+    padding: 0 12px !important;
+  }
+  .nav-links a {
+    font-size: .82rem !important;
+    padding: 8px 9px !important;
+  }
+  .creator-avatar {
+    width: 48px !important;
+    height: 48px !important;
+  }
+  .video-card h3,
+  .thumb-card h3 {
+    font-size: 1rem !important;
+  }
+}
+
+/* Lower-power/mobile devices: turn continuous animations way down. */
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .grid-plane,
+  .grid-plane::after,
+  .creator-track,
+  .price-card,
+  .service-card {
+    animation: none !important;
+  }
+
+  .motion-pop,
+  .motion-pop.is-visible,
+  .reveal,
+  .reveal.in-view {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: opacity .16s ease !important;
+  }
+}
+
+
+/* ------------------------------------------------------------------
+   SHINE CONTAINMENT PATCH
+   Keeps any thumbnail shine/sheen effect inside the thumbnail card only,
+   preventing it from sweeping across the full screen.
+------------------------------------------------------------------ */
+
+.video-card,
+.thumb-card {
+  position: relative !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  contain: paint !important;
+}
+
+.yt-thumb,
+.thumb,
+.image-thumb {
+  position: relative !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  contain: paint !important;
+}
+
+/* Disable any old global card shine pseudo-elements that can escape the card. */
+.video-card::before,
+.video-card::after,
+.thumb-card::before,
+.thumb-card::after,
+.youtube-feed::before,
+.youtube-feed::after,
+.portfolio-grid::before,
+.portfolio-grid::after {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+}
+
+/* If the shine exists, force it to be clipped to the thumbnail image/card area. */
+.yt-thumb::after,
+.thumb::after,
+.image-thumb::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 3 !important;
+  pointer-events: none !important;
+  background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,.18) 42%, rgba(255,255,255,.34) 50%, rgba(255,255,255,.14) 58%, transparent 100%) !important;
+  transform: translateX(-135%) skewX(-18deg) !important;
+  opacity: 0 !important;
+  transition: transform .72s cubic-bezier(.16, 1, .3, 1), opacity .22s ease !important;
+}
+
+.video-card:hover .yt-thumb::after,
+.thumb-card:hover .thumb::after,
+.video-card:hover .image-thumb::after,
+.thumb-card:hover .image-thumb::after {
+  transform: translateX(135%) skewX(-18deg) !important;
+  opacity: 1 !important;
+}
+
+/* Prevent any accidental viewport-sized shine layers on portfolio hover. */
+.video-card:hover::before,
+.video-card:hover::after,
+.thumb-card:hover::before,
+.thumb-card:hover::after {
+  transform: none !important;
+}
