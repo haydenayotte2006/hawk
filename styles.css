@@ -3946,3 +3946,227 @@ body {
 .thumb-card:hover::after {
   transform: none !important;
 }
+
+
+/* ------------------------------------------------------------------
+   BUG FIX PATCH
+   Fixes category filters, thumbnail preview, runaway shine overlays,
+   grey load bar, and restores the creator dock feel.
+------------------------------------------------------------------ */
+
+/* Remove the old full-section shine. Shine should only live inside thumbnail boxes. */
+.youtube-feed::before,
+.youtube-feed::after,
+.portfolio-grid::before,
+.portfolio-grid::after,
+.page::before,
+.page::after,
+main::before,
+main::after {
+  content: none !important;
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  animation: none !important;
+}
+
+/* Fully kill old page-transition overlays / grey bars. */
+.page-transition,
+.page-transition::before,
+.page-transition::after,
+.transition-overlay,
+.transition-overlay::before,
+.transition-overlay::after {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Keep the shine clipped to the actual thumbnail image only. */
+.video-card,
+.thumb-card {
+  position: relative !important;
+  overflow: visible !important;
+  isolation: isolate !important;
+}
+
+.yt-thumb,
+.thumb,
+.image-thumb {
+  position: relative !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  contain: paint !important;
+}
+
+.video-card::before,
+.video-card::after,
+.thumb-card::before,
+.thumb-card::after {
+  content: none !important;
+  display: none !important;
+}
+
+.yt-thumb::before,
+.thumb::before,
+.image-thumb::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 3 !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  background: linear-gradient(115deg, transparent 0%, rgba(255,255,255,.13) 42%, rgba(255,255,255,.28) 50%, rgba(255,255,255,.12) 58%, transparent 100%) !important;
+  transform: translateX(-135%) skewX(-18deg) !important;
+  transition: transform .58s cubic-bezier(.16, 1, .3, 1), opacity .18s ease !important;
+}
+
+.yt-thumb::after,
+.thumb::after,
+.image-thumb::after {
+  content: none !important;
+  display: none !important;
+}
+
+.video-card:hover .yt-thumb::before,
+.video-card:hover .image-thumb::before,
+.thumb-card:hover .thumb::before,
+.thumb-card:hover .image-thumb::before {
+  opacity: 1 !important;
+  transform: translateX(135%) skewX(-18deg) !important;
+}
+
+/* Filtering must use display none for hidden cards. */
+.video-card.is-hidden,
+.thumb-card.is-hidden {
+  display: none !important;
+}
+
+.video-card:not(.is-hidden),
+.thumb-card:not(.is-hidden) {
+  display: block;
+}
+
+/* Restore the creator bar/dock behavior closer to the earlier version. */
+.creator-dock {
+  width: min(760px, 92vw) !important;
+  height: clamp(82px, 12vw, 118px) !important;
+  overflow: hidden !important;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 15%, #000 85%, transparent 100%) !important;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 15%, #000 85%, transparent 100%) !important;
+}
+
+.creator-track {
+  display: flex !important;
+  align-items: center !important;
+  gap: clamp(18px, 2.4vw, 28px) !important;
+  width: max-content !important;
+  animation: creatorLoop 34s linear infinite !important;
+  will-change: transform !important;
+}
+
+.creator-avatar {
+  flex: 0 0 auto !important;
+  width: clamp(54px, 7vw, 74px) !important;
+  height: clamp(54px, 7vw, 74px) !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  transform-origin: center center !important;
+  transition: box-shadow .18s ease !important;
+  will-change: transform, opacity !important;
+}
+
+.creator-avatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: inherit !important;
+  display: block !important;
+}
+
+/* Thumbnail click cursor restored. */
+.image-thumb {
+  cursor: zoom-in !important;
+}
+
+/* Spyglass/dim preview, no background blur. */
+.spyglass-viewer {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 28px !important;
+  background: rgba(2, 6, 14, .86) !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: opacity .22s ease, visibility .22s ease !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.spyglass-viewer.is-open {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.spyglass-frame {
+  width: min(1120px, 94vw) !important;
+  margin: 0 !important;
+}
+
+.spyglass-frame img {
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  border-radius: 18px !important;
+  box-shadow: 0 28px 80px rgba(0,0,0,.58) !important;
+}
+
+.spyglass-frame figcaption {
+  margin-top: 14px !important;
+  text-align: center !important;
+}
+
+.spyglass-title {
+  display: block !important;
+  color: #fff !important;
+  font-weight: 900 !important;
+  font-size: clamp(1.05rem, 2vw, 1.45rem) !important;
+}
+
+.spyglass-subtitle {
+  display: block !important;
+  margin-top: 5px !important;
+  color: rgba(230, 236, 247, .72) !important;
+  font-weight: 700 !important;
+}
+
+.spyglass-close {
+  position: fixed !important;
+  top: 20px !important;
+  right: 22px !important;
+  z-index: 10000 !important;
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  background: rgba(20,25,34,.92) !important;
+  color: #fff !important;
+  font-size: 1.7rem !important;
+  cursor: pointer !important;
+}
+
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .creator-track {
+    animation: creatorLoop 44s linear infinite !important;
+  }
+}

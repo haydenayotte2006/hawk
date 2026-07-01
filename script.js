@@ -520,3 +520,184 @@ document.querySelectorAll("[data-copy-discord]").forEach((button) => {
 
   window.addEventListener("load", disableHeavyRevealEffects, { once: true });
 })();
+
+
+/* ------------------------------------------------------------------
+   BUG FIX SCRIPT
+   Rebinds filters and thumbnail preview after portfolio-data.js renders.
+   Uses delegation, so it keeps working even when cards are rebuilt.
+------------------------------------------------------------------ */
+(function () {
+  function closestGrid(tabGroup) {
+    if (!tabGroup) return null;
+    const parent = tabGroup.parentElement;
+    if (!parent) return null;
+    return parent.querySelector("#thumbnailGrid, .video-grid, .portfolio-grid");
+  }
+
+  function applyFilter(tab) {
+    const tabGroup = tab.closest(".feed-tabs");
+    const grid = closestGrid(tabGroup);
+    if (!tabGroup || !grid) return;
+
+    const filter = tab.dataset.filter || "all";
+    const tabs = Array.from(tabGroup.querySelectorAll(".feed-tab"));
+
+    tabs.forEach((item) => {
+      const active = item === tab;
+      item.classList.toggle("active", active);
+      item.setAttribute("aria-selected", String(active));
+    });
+
+    Array.from(grid.querySelectorAll(".video-card, .thumb-card")).forEach((card) => {
+      const categories = (card.dataset.category || "").toLowerCase().split(/\s+/).filter(Boolean);
+      const show = filter === "all" || categories.includes(filter.toLowerCase());
+      card.classList.toggle("is-hidden", !show);
+      card.classList.remove("is-hiding");
+      card.classList.toggle("is-showing", show);
+    });
+  }
+
+  // Capture phase prevents older broken filter handlers from taking over.
+  document.addEventListener("click", function (event) {
+    const tab = event.target.closest(".feed-tab");
+    if (!tab) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    applyFilter(tab);
+  }, true);
+
+  function ensureSpyglass() {
+    let overlay = document.querySelector(".spyglass-viewer");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.className = "spyglass-viewer";
+      overlay.setAttribute("aria-hidden", "true");
+      overlay.innerHTML = '<button class="spyglass-close" type="button" aria-label="Close thumbnail preview">×</button><figure class="spyglass-frame"><img alt="Expanded thumbnail preview"><figcaption></figcaption></figure>';
+      document.body.appendChild(overlay);
+    }
+    return overlay;
+  }
+
+  function openPreview(card) {
+    if (!card) return;
+    const img = card.querySelector(".image-thumb img");
+    if (!img) return;
+
+    const overlay = ensureSpyglass();
+    const preview = overlay.querySelector(".spyglass-frame img");
+    const caption = overlay.querySelector("figcaption");
+    const title = card.querySelector("h3")?.textContent?.trim() || img.alt || "Thumbnail preview";
+    const subtitle = card.querySelector("p")?.textContent?.trim() || "";
+
+    preview.src = img.currentSrc || img.src;
+    preview.alt = img.alt || title;
+    caption.innerHTML = '<span class="spyglass-title"></span>' + (subtitle ? '<span class="spyglass-subtitle"></span>' : "");
+    caption.querySelector(".spyglass-title").textContent = title;
+    if (subtitle) caption.querySelector(".spyglass-subtitle").textContent = subtitle;
+
+    overlay.classList.add("is-open");
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.classList.add("spyglass-open");
+  }
+
+  function closePreview() {
+    const overlay = document.querySelector(".spyglass-viewer");
+    if (!overlay) return;
+    overlay.classList.remove("is-open");
+    overlay.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("spyglass-open");
+  }
+
+  document.addEventListener("click", function (event) {
+    const close = event.target.closest(".spyglass-close");
+    if (close || event.target.classList.contains("spyglass-viewer")) {
+      event.preventDefault();
+      closePreview();
+      return;
+    }
+
+    const thumb = event.target.closest(".video-card .image-thumb, .thumb-card .image-thumb");
+    if (!thumb) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    openPreview(thumb.closest(".video-card, .thumb-card"));
+  }, true);
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") closePreview();
+    if ((event.key === "Enter" || event.key === " ") && event.target.closest(".image-thumb")) {
+      event.preventDefault();
+      openPreview(event.target.closest(".video-card, .thumb-card"));
+    }
+  }, true);
+
+  function prepThumbs() {
+    document.querySelectorAll(".image-thumb").forEach((thumb) => {
+      thumb.setAttribute("role", "button");
+      thumb.setAttribute("tabindex", "0");
+      thumb.setAttribute("aria-label", "Open larger thumbnail preview");
+    });
+  }
+
+  // Restore creator dock magnification using current avatars, even after data rendering.
+  let dockRaf = null;
+  const state = new WeakMap();
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function updateDock() {
+    const dock = document.querySelector(".creator-dock");
+    const avatars = dock ? Array.from(dock.querySelectorAll(".creator-avatar")) : [];
+    if (!dock || !avatars.length) {
+      dockRaf = requestAnimationFrame(updateDock);
+      return;
+    }
+
+    const rect = dock.getBoundingClientRect();
+    const center = rect.left + rect.width / 2;
+    const influence = Math.max(170, rect.width * .34);
+
+    avatars.forEach((avatar) => {
+      const aRect = avatar.getBoundingClientRect();
+      const aCenter = aRect.left + aRect.width / 2;
+      const distance = Math.abs(center - aCenter);
+      const proximity = Math.max(0, 1 - distance / influence);
+      const eased = proximity * proximity * (3 - 2 * proximity);
+
+      const targetScale = .88 + eased * .52;
+      const targetOpacity = .68 + eased * .32;
+      const current = state.get(avatar) || { scale: targetScale, opacity: targetOpacity };
+      const next = {
+        scale: lerp(current.scale, targetScale, .16),
+        opacity: lerp(current.opacity, targetOpacity, .16)
+      };
+      state.set(avatar, next);
+
+      avatar.style.transform = "scale(" + next.scale.toFixed(3) + ")";
+      avatar.style.opacity = next.opacity.toFixed(3);
+      avatar.style.zIndex = String(1 + Math.round(eased * 10));
+    });
+
+    dockRaf = requestAnimationFrame(updateDock);
+  }
+
+  function removeGreyBars() {
+    document.querySelectorAll(".page-transition, .transition-overlay").forEach((el) => el.remove());
+    document.body.classList.remove("page-leaving");
+  }
+
+  function initBugFixes() {
+    prepThumbs();
+    removeGreyBars();
+    if (!dockRaf) updateDock();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initBugFixes);
+  } else {
+    initBugFixes();
+  }
+
+  window.addEventListener("load", initBugFixes);
+})();

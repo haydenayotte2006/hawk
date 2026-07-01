@@ -166,23 +166,5 @@ window.portfolioItems = [
     "title": "Escaping Minecraft's Most SECURE Prison..",
     "subtitle": "Socks Games",
     "category": "gaming"
-  },
-  {
-    "image": "/assets/thumbnails/pickaxe copy.jpg",
-    "title": "Every Second +1 PICKAXE POWER in Roblox!",
-    "subtitle": "Quacks",
-    "category": "roblox"
-  },
-  {
-    "image": "/assets/thumbnails/army copy.jpg",
-    "title": "ADMIN WAR TYCOON",
-    "subtitle": "SocksBlox",
-    "category": "roblox"
-  },
-  {
-    "image": "/assets/thumbnails/animal 4copy.jpg",
-    "title": "DO NOT PLAY ROBLOX ANIMAL HOSPITAL!",
-    "subtitle": "SocksBlox",
-    "category": "roblox"
   }
 ];
