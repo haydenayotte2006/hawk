@@ -4170,3 +4170,88 @@ main::after {
     animation: creatorLoop 44s linear infinite !important;
   }
 }
+
+
+/* ------------------------------------------------------------------
+   CREATOR BAR SCROLL FIX
+   Forces the client/profile picture dock to continuously scroll again.
+   This override is intentionally last so older performance/mobile rules
+   cannot accidentally stop the track animation.
+------------------------------------------------------------------ */
+
+.creator-dock {
+  width: min(760px, 92vw) !important;
+  height: clamp(82px, 12vw, 118px) !important;
+  display: flex !important;
+  align-items: center !important;
+  overflow: hidden !important;
+  position: relative !important;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 15%, #000 85%, transparent 100%) !important;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 15%, #000 85%, transparent 100%) !important;
+}
+
+.creator-track {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  gap: clamp(18px, 2.4vw, 28px) !important;
+  width: max-content !important;
+  min-width: max-content !important;
+  animation-name: hawkCreatorScrollLoop !important;
+  animation-duration: 34s !important;
+  animation-timing-function: linear !important;
+  animation-iteration-count: infinite !important;
+  animation-play-state: running !important;
+  will-change: transform !important;
+  transform: translate3d(0, 0, 0);
+}
+
+.creator-track:hover {
+  animation-play-state: running !important;
+}
+
+.creator-avatar {
+  flex: 0 0 auto !important;
+  width: clamp(54px, 7vw, 74px) !important;
+  height: clamp(54px, 7vw, 74px) !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  transform-origin: center center !important;
+}
+
+.creator-avatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  border-radius: inherit !important;
+}
+
+@keyframes hawkCreatorScrollLoop {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (max-width: 900px) {
+  .creator-track {
+    animation-name: hawkCreatorScrollLoop !important;
+    animation-duration: 42s !important;
+    animation-timing-function: linear !important;
+    animation-iteration-count: infinite !important;
+    animation-play-state: running !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .creator-track {
+    animation-name: hawkCreatorScrollLoop !important;
+    animation-duration: 60s !important;
+    animation-timing-function: linear !important;
+    animation-iteration-count: infinite !important;
+    animation-play-state: running !important;
+  }
+}

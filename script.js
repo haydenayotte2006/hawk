@@ -701,3 +701,32 @@ document.querySelectorAll("[data-copy-discord]").forEach((button) => {
 
   window.addEventListener("load", initBugFixes);
 })();
+
+
+/* Creator bar guard: make sure the profile track has enough repeated items to scroll seamlessly. */
+(function () {
+  function fixCreatorTrackLoop() {
+    const track = document.querySelector(".creator-track");
+    if (!track) return;
+
+    const avatars = Array.from(track.querySelectorAll(".creator-avatar"));
+    if (!avatars.length) return;
+
+    // If the data renderer only produced one set, duplicate it for seamless -50% scrolling.
+    if (avatars.length < 12) {
+      const html = track.innerHTML;
+      track.innerHTML = html + html;
+    }
+
+    track.style.animationName = "hawkCreatorScrollLoop";
+    track.style.animationPlayState = "running";
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fixCreatorTrackLoop);
+  } else {
+    fixCreatorTrackLoop();
+  }
+
+  window.addEventListener("load", fixCreatorTrackLoop, { once: true });
+})();
