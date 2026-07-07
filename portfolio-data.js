@@ -166,5 +166,29 @@ window.portfolioItems = [
     "title": "Escaping Minecraft's Most SECURE Prison..",
     "subtitle": "Socks Games",
     "category": "gaming"
+  },
+  {
+    "image": "/assets/thumbnails/quacksblox-drill-mining-factory.jpg",
+    "title": "I Made TRILLIONS Building Drill Mining Factory in Roblox!",
+    "subtitle": "QuacksBlox",
+    "category": "roblox"
+  },
+  {
+    "image": "/assets/thumbnails/quacksblox-hot-sauce.jpg",
+    "title": "I Made WORLD'S HOTTEST Hot Sauce in Roblox!",
+    "subtitle": "QuacksBlox",
+    "category": "roblox"
+  },
+  {
+    "image": "/assets/thumbnails/quacksblox-mine-per-click.jpg",
+    "title": "Roblox +1 MINE PER CLICK",
+    "subtitle": "QuacksBlox",
+    "category": "roblox"
+  },
+  {
+    "image": "/assets/thumbnails/quacksblox-kick-to-score-goals.jpg",
+    "title": "Every Second +1 KICK to SCORE GOALS in Roblox!",
+    "subtitle": "QuacksBlox",
+    "category": "roblox"
   }
 ];
