@@ -1,9 +1,4 @@
-// EDIT THIS FILE TO ADD / REMOVE / RENAME THUMBNAILS.
-// 1) Upload your image to: assets/thumbnails/
-// 2) Add a new item below.
-// category must be one of: "gaming", "irl", or "roblox".
-// Keep image paths starting with /assets/thumbnails/ for GitHub Pages.
-
+// Easy-edit portfolio list.
 window.portfolioItems = [
   {
     "image": "/assets/thumbnails/thumb-irl-1.jpg",

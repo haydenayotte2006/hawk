@@ -4255,3 +4255,8 @@ main::after {
     animation-play-state: running !important;
   }
 }
+
+/* QuacksBlox visibility fix */
+.video-card[data-category="roblox"], .thumb-card[data-category="roblox"] { visibility: visible; }
+.video-card.is-hidden, .thumb-card.is-hidden { display: none !important; }
+.video-card:not(.is-hidden), .thumb-card:not(.is-hidden) { display: block; }

@@ -730,3 +730,51 @@ document.querySelectorAll("[data-copy-discord]").forEach((button) => {
 
   window.addEventListener("load", fixCreatorTrackLoop, { once: true });
 })();
+
+/* QuacksBlox forced visibility + post-render safety. */
+(function () {
+  const quacks = [
+    ["/assets/thumbnails/quacksblox-drill-mining-factory.jpg", "I Made TRILLIONS Building Drill Mining Factory in Roblox!", "QuacksBlox"],
+    ["/assets/thumbnails/quacksblox-hot-sauce.jpg", "I Made WORLD'S HOTTEST Hot Sauce in Roblox!", "QuacksBlox"],
+    ["/assets/thumbnails/quacksblox-mine-per-click.jpg", "Roblox +1 MINE PER CLICK", "QuacksBlox"],
+    ["/assets/thumbnails/quacksblox-kick-to-score-goals.jpg", "Every Second +1 KICK to SCORE GOALS in Roblox!", "QuacksBlox"]
+  ];
+
+  function card(item, portfolio) {
+    const image = item[0], title = item[1], subtitle = item[2];
+    if (portfolio) {
+      return `<article class="thumb-card video-card" data-category="roblox" data-quacksblox-added="true"><div class="thumb image-thumb"><img src="${image}" alt="${title.replace(/"/g, "&quot;")} thumbnail" loading="lazy" decoding="async"></div><h3>${title}</h3><p>${subtitle}</p></article>`;
+    }
+    return `<article class="video-card" data-category="roblox" data-quacksblox-added="true"><div class="yt-thumb image-thumb"><img src="${image}" alt="${title.replace(/"/g, "&quot;")} thumbnail" loading="lazy" decoding="async"><small>ROBLOX</small></div><h3>${title}</h3><p>${subtitle}</p></article>`;
+  }
+
+  function ensureQuacks() {
+    window.portfolioItems = Array.isArray(window.portfolioItems) ? window.portfolioItems : [];
+    const dataFiles = new Set(window.portfolioItems.map(i => String(i.image || "").split("/").pop()));
+    quacks.forEach((q) => {
+      const file = q[0].split("/").pop();
+      if (!dataFiles.has(file)) {
+        window.portfolioItems.push({ image: q[0], title: q[1], subtitle: q[2], category: "roblox" });
+      }
+    });
+
+    document.querySelectorAll(".video-grid, .portfolio-grid").forEach((grid) => {
+      const current = grid.innerHTML;
+      quacks.forEach((q) => {
+        const file = q[0].split("/").pop();
+        if (!current.includes(file)) grid.insertAdjacentHTML("beforeend", card(q, grid.classList.contains("portfolio-grid")));
+      });
+    });
+
+    document.querySelectorAll(".image-thumb").forEach((thumb) => {
+      thumb.setAttribute("role", "button");
+      thumb.setAttribute("tabindex", "0");
+      thumb.style.cursor = "zoom-in";
+    });
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", ensureQuacks);
+  else ensureQuacks();
+  window.addEventListener("load", ensureQuacks);
+  setTimeout(ensureQuacks, 250);
+})();
